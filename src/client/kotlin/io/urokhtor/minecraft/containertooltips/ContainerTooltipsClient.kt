@@ -39,7 +39,7 @@ object ContainerTooltipsClient : ClientModInitializer {
 
 		HudRenderCallback.EVENT.register { guiGraphics, _ ->
 			CurrentContainerContext.get()?.let {
-				if (!configuration.showAutomatically && keyIsNotPressed(configuration.showWithKeyCode)) {
+				if (MinecraftClient.getInstance().currentScreen != null || !configuration.showAutomatically && keyIsNotPressed(configuration.showWithKeyCode)) {
 					return@let
 				}
 

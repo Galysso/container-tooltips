@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id 'fabric-loom' version '1.7.1'
+	id 'fabric-loom' version '1.9.1'
 	id 'maven-publish'
   	id "org.jetbrains.kotlin.jvm" version "2.0.0"
 	id 'com.modrinth.minotaur' version '2.+'
@@ -30,6 +30,7 @@ loom {
 repositories {
 	maven { url "https://maven.shedaniel.me/" }
 	maven { url "https://maven.terraformersmc.com/releases/" }
+	maven { url = "https://cursemaven.com" }
 }
 
 dependencies {
@@ -44,6 +45,21 @@ dependencies {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 	modApi("com.terraformersmc:modmenu:${project.mod_menu_version}")
+
+	// Legendary Tooltips
+	modImplementation("curse.maven:legendary-tooltips-fabric-542478:6400658") {
+	    exclude group: "net.minecraft"
+	}
+
+	// Iceberg
+	modImplementation("curse.maven:iceberg-fabric-539382:6379428") {
+		exclude group: "net.minecraft"
+	}
+
+	// Prism
+	modImplementation("curse.maven:prism-fabric-665526:6372978") {
+	    exclude group: "net.minecraft"
+	}
 }
 
 processResources {

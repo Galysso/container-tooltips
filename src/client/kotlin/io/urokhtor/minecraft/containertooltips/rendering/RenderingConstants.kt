@@ -10,6 +10,8 @@ const val ITEM_SIZE_Y: Int = 20
 /**
  * The padding in pixels applied by Minecraft's TooltipBackgroundRenderer.
  */
-const val TOOLTIP_BACKGROUND_PADDING: Int = 3
+const val TOOLTIP_TOP_PADDING: Int = 3
+const val TOOLTIP_BORDER_PADDING: Int = 3
+const val TOOLTIP_TEXT_PADDING: Int = 0
 val BACKGROUND_TEXTURE: Identifier = Identifier.ofVanilla("container/bundle/background")
 val SLOT_TEXTURE: Identifier = Identifier.ofVanilla("container/bundle/slot")
