@@ -3,11 +3,13 @@ package io.urokhtor.minecraft.containertooltips
 import io.urokhtor.minecraft.containertooltips.configuration.Configuration
 import io.urokhtor.minecraft.containertooltips.rendering.ContainerTooltip
 import io.urokhtor.minecraft.containertooltips.rendering.EmptyContainerTooltip
+import io.urokhtor.minecraft.containertooltips.rendering.UngeneratedContainerTooltip
 import me.shedaniel.autoconfig.AutoConfig
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback
+import net.minecraft.block.entity.LootableContainerBlockEntity
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.util.InputUtil
 import net.minecraft.item.AirBlockItem
@@ -17,6 +19,7 @@ object ContainerTooltipsClient : ClientModInitializer {
 
 	private val containerTooltip = ContainerTooltip()
 	private val emptyContainerTooltip = EmptyContainerTooltip()
+	private val ungeneratedContainerTooltip = UngeneratedContainerTooltip()
 	private lateinit var configuration: Configuration
 
 	override fun onInitializeClient() {
@@ -32,7 +35,7 @@ object ContainerTooltipsClient : ClientModInitializer {
 		ClientPlayNetworking.registerGlobalReceiver(InventoryResponsePayload.ID) { payload, _ ->
 			run {
 				payload.let {
-					CurrentContainerContext.set(Container(it.name, it.items))
+					CurrentContainerContext.set(Container(it.name, it.items, it.generated))
 				}
 			}
 		}
@@ -48,13 +51,16 @@ object ContainerTooltipsClient : ClientModInitializer {
 				val isInventoryEmpty = it.inventory
 					.none { inventory -> inventory.item !is AirBlockItem }
 
-				if (isInventoryEmpty) {
+				if (!it.generated) {
+					ungeneratedContainerTooltip.render(client.textRenderer, client.window.scaledWidth / 2, guiGraphics, it)
+				} else if (isInventoryEmpty) {
 					emptyContainerTooltip.render(client.textRenderer, client.window.scaledWidth / 2, guiGraphics, it)
 				} else {
 					containerTooltip.render(client.textRenderer, client.window.scaledWidth / 2, guiGraphics, it)
 				}
 			}
 		}
+
 	}
 
 	private fun keyIsNotPressed(keyCode: Int) =
