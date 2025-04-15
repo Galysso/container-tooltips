@@ -37,30 +37,42 @@ class InventoryRequestHandler {
         player: ServerPlayerEntity
     ): InventoryResponsePayload {
         val blockState = blockEntity.cachedState
-        val inventory = ChestBlock.getInventory(
-            blockState.block as ChestBlock,
-            blockState,
-            player.serverWorld,
-            blockEntity.pos,
-            true
-        )
+        val generated = blockEntity.lootTable == null
+        if (generated) {
+            val inventory = ChestBlock.getInventory(
+                blockState.block as ChestBlock,
+                blockState,
+                player.serverWorld,
+                blockEntity.pos,
+                true
+            )
 
-        val defaultedList = DefaultedList.ofSize(inventory!!.size(), ItemStack.EMPTY)
-        IntRange(0, inventory.size() - 1).map { slot ->
-            defaultedList.set(slot, inventory.getStack(slot))
+            val defaultedList = DefaultedList.ofSize(inventory!!.size(), ItemStack.EMPTY)
+            IntRange(0, inventory.size() - 1).map { slot ->
+                defaultedList.set(slot, inventory.getStack(slot))
+            }
+
+            return InventoryResponsePayload(
+                name = blockEntity.displayName.asTruncatedString(32),
+                maxSize = inventory.size(),
+                items = defaultedList,
+                generated = true
+            )
         }
 
         return InventoryResponsePayload(
             name = blockEntity.displayName.asTruncatedString(32),
-            maxSize = inventory.size(),
-            items = defaultedList
+            maxSize = 0,
+            items = DefaultedList.ofSize(0, ItemStack.EMPTY),
+            generated = false
         )
     }
 
     private fun readEnderChestInventory(player: ServerPlayerEntity) = InventoryResponsePayload(
         name = Text.translatable("container.enderchest").asTruncatedString(32),
         maxSize = player.enderChestInventory.size(),
-        items = player.enderChestInventory.heldStacks
+        items = player.enderChestInventory.heldStacks,
+        generated = true
     )
 
     private fun readGenericInventory(blockEntity: LootableContainerBlockEntity): InventoryResponsePayload {
@@ -72,7 +84,8 @@ class InventoryRequestHandler {
         return InventoryResponsePayload(
             name = blockEntity.displayName.asTruncatedString(32),
             maxSize = blockEntity.size(),
-            items = defaultedList
+            items = defaultedList,
+            generated = true
         )
     }
 
@@ -85,7 +98,8 @@ class InventoryRequestHandler {
         return InventoryResponsePayload(
             name = blockEntity.displayName.asTruncatedString(32),
             maxSize = blockEntity.size(),
-            items = defaultedList
+            items = defaultedList,
+            generated = true
         )
     }
 }
