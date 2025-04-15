@@ -12,7 +12,7 @@ class UngeneratedContainerTooltip {
             textRenderer,
             listOf(
                 Text.of(container.name).asOrderedText(),
-                Text.translatable("container.ungenerated").withColor(Colors.GRAY).asOrderedText()
+                Text.translatable("container.ungenerated").withColor(Colors.LIGHT_RED).asOrderedText()
             ),
             DirectTooltipPositioner(),
             horizontalCenter - textRenderer.getWidth(container.name) / 2,
