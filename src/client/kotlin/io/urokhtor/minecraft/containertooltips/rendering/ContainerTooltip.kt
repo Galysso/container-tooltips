@@ -71,6 +71,37 @@ class ContainerTooltip {
                 val yOffset = contentY + stackIndex * ITEM_SIZE_Y + 1
                 drawContext.drawGuiTexture(SLOT_TEXTURE, xOffset, yOffset, 0, ITEM_SIZE_X, ITEM_SIZE_Y)
                 drawContext.drawItem(itemStack, xOffset + 1, yOffset + 1)
+                if (!itemStack.isEmpty) {
+                    val rarityFormatting = itemStack.rarity.formatting
+                    val rawColor = rarityFormatting.colorValue
+                    if (rawColor != null && (rawColor and 0xFFFFFF) != 0xFFFFFF) {
+                        val colorWithAlpha = (0xFF shl 24) or (rawColor and 0xFFFFFF)
+                        val transparentColor = (0x00 shl 24) or (rawColor and 0xFFFFFF)
+                        drawContext.fill(
+                            xOffset + 1,
+                            yOffset + ITEM_SIZE_Y - 4,
+                            xOffset + ITEM_SIZE_X - 1,
+                            yOffset + ITEM_SIZE_Y - 3,
+                            colorWithAlpha
+                        ) // bas
+                        drawContext.fillGradient(
+                            xOffset + 1,
+                            yOffset + 2,
+                            xOffset + 2,
+                            yOffset + ITEM_SIZE_Y - 3,
+                            transparentColor,
+                            colorWithAlpha
+                        ) // gauche
+                        drawContext.fillGradient(
+                            xOffset + ITEM_SIZE_X - 2,
+                            yOffset + 2,
+                            xOffset + ITEM_SIZE_X - 1,
+                            yOffset + ITEM_SIZE_Y - 3,
+                            transparentColor,
+                            colorWithAlpha
+                        ) // droite
+                    }
+                }
                 drawContext.drawItemInSlot(textRenderer, itemStack, xOffset + 1, yOffset + 1)
             }
         }
